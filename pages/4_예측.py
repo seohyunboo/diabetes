@@ -157,7 +157,7 @@ def home_page():
 
 def detect_text(image_bytes):
     # 하드코딩된 API 키 파일 경로s
-    API_KEY_PATH = 'key/halogen-sol-435402-e9-ce2cdbfa3343.json'
+    API_KEY_PATH = st.secrets["google_cloud"]["private_key"]
 
     try:
         # API키 값 위치 설정
