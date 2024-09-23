@@ -6,7 +6,7 @@ import joblib
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-from data.function import remove_outliers
+from pages.__pycache__.function import remove_outliers
 import matplotlib.font_manager as fm
 
 
