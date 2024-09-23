@@ -156,12 +156,10 @@ def home_page():
 
 
 def detect_text(image_bytes):
-    # 하드코딩된 API 키 파일 경로s
-    API_KEY_PATH = st.secrets["google_cloud"]
-
+    # 하드코딩된 API 키 파일 경로
     google_cloud = st.secrets["google_cloud"]
 
-    type_ = google_cloud["type"]
+    type = google_cloud["type"]
     project_id = google_cloud["project_id"]
     private_key_id = google_cloud["private_key_id"]
     private_key = google_cloud["private_key"]
