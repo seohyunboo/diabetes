@@ -155,55 +155,65 @@ def home_page():
             st.session_state.page = 'survey'
 
 
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-
-# Streamlit secrets에서 서비스 계정 정보를 가져옴
-google_cloud = st.secrets["google_cloud"]
-
-# 서비스 계정 인증 생성
-credentials = service_account.Credentials.from_service_account_info(google_cloud)
-
-# Google API 클라이언트를 생성하여 API 사용
-service = build('your_api_service', 'v1', credentials=credentials)
-
-
 def detect_text(image_bytes):
-    try:
-        # API키 값 위치 설정
-        client = vision.ImageAnnotatorClient(credentials=credentials)
+    # 시크릿에서 JSON 데이터 가져오기
+    secrets = {
+        "type": st.secrets["GENERAL"]["type"],
+        "project_id": st.secrets["GENERAL"]["project_id"],
+        "private_key_id": st.secrets["GENERAL"]["private_key_id"],
+        "private_key": st.secrets["GENERAL"]["private_key"],
+        "client_email": st.secrets["GENERAL"]["client_email"],
+        "client_id": st.secrets["GENERAL"]["client_id"],
+        "auth_uri": st.secrets["GENERAL"]["auth_uri"],
+        "token_uri": st.secrets["GENERAL"]["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets["GENERAL"]["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets["GENERAL"]["client_x509_cert_url"],
+        "universe_domain": st.secrets["GENERAL"]["universe_domain"]
+    }
 
-        # 이미지 객체 생성
-        image = vision.Image(content=image_bytes)
+    # 임시 파일에 JSON 저장
+    with tempfile.NamedTemporaryFile(delete=True, mode='w', suffix='.json') as temp_file:
+        json.dump(secrets, temp_file)
+        temp_file.flush()  # 데이터를 파일에 기록
 
-        # 텍스트 감지 요청
-        response = client.text_detection(image=image)
-        texts = response.text_annotations
+        # 환경 변수 설정
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = temp_file.name
+        
+        try:
+            # Vision API 클라이언트 생성
+            client = vision.ImageAnnotatorClient()
+            
+            # 이미지 객체 생성
+            image = vision.Image(content=image_bytes)
+            
+            # 텍스트 감지 요청
+            response = client.text_detection(image=image)
+            texts = response.text_annotations
+            
+            # 추출된 텍스트를 하나의 문자열로 합침
+            full_text = ' '.join([text.description for text in texts])
+            st.write(full_text)
 
-        # 추출된 텍스트를 하나의 문자열로 합침
-        full_text = ' '.join([text.description for text in texts])
-        st.write(full_text)
+            # 텍스트 파싱
+            parsed_data = parse_medical_report(full_text)
+            
+            return parsed_data
 
-        # 텍스트 파싱
-        parsed_data = parse_medical_report(full_text)
-
-        return parsed_data
-
-    except Exception as e:
-        st.error(f'An error occurred: {str(e)}')
-        return None
-
+        except Exception as e:
+            st.error(f"Error detecting text: {e}")
+            return None
+            
 def parse_medical_report(text):
     result = {}
     patterns = [
-        (r"요검사\s*신장질환\s*요단백\s*(\w+)", "요단백"),
-        (r"허리둘레\s*(\w+)", "허리둘레"),
-        (r"총 콜레스테롤\s*(\w+)", "총 콜레스테롤"),
-        (r"중성지방\s*(\w+)", "중성지방"),
+        (r"요검사\s*신장질환\s*요단백\s*(\d+)", "요단백"),
+        (r"허리둘레\s*(\d+)", "허리둘레"),
+        (r"총 콜레스테롤\s*(\d+)", "총 콜레스테롤"),
+        (r"중성지방\s*(\d.+)", "중성지방"),
         (r"혈청\s크레아티닌\s*([\d.]+)", "혈중크레아티닌"),
         (r"ALT\(SGPT\)\s*(\d+)\s*U/L", "간장질환 ALT(SGPT)")
     ]
-
+    
     for pattern, key in patterns:
         match = re.search(pattern, text)
         if match:
@@ -214,8 +224,9 @@ def parse_medical_report(text):
                 result[key] = value
         else:
             result[key] = "정보 없음"
-
+    
     return result
+
 
 def survey_page():
     # 파싱된 데이터
