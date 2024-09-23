@@ -1,0 +1,13 @@
+streamlit
+pandas
+seaborn
+matplotlib
+joblib
+numpy
+plotly
+xgboost
+sklearn
+io
+re
+google.cloud
+os
