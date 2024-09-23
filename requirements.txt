@@ -8,3 +8,5 @@ plotly
 xgboost
 scikit-learn
 google-cloud-vision
+google-auth
+google-api-python-client
