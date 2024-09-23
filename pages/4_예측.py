@@ -159,17 +159,18 @@ def detect_text(image_bytes):
     # 하드코딩된 API 키 파일 경로
     google_cloud = st.secrets["google_cloud"]
 
-    type = google_cloud["type"]
-    project_id = google_cloud["project_id"]
-    private_key_id = google_cloud["private_key_id"]
-    private_key = google_cloud["private_key"]
-    client_email = google_cloud["client_email"]
-    client_id = google_cloud["client_id"]
-    auth_uri = google_cloud["auth_uri"]
-    token_uri = google_cloud["token_uri"]
-    auth_provider_x509_cert_url = google_cloud["auth_provider_x509_cert_url"]
-    client_x509_cert_url = google_cloud["client_x509_cert_url"]
-    universe_domain = google_cloud["universe_domain"]
+    type = str(google_cloud["type"])
+    project_id = str(google_cloud["project_id"])
+    private_key_id = str(google_cloud["private_key_id"])
+    private_key = str(google_cloud["private_key"])
+    client_email = str(google_cloud["client_email"])
+    client_id = str(google_cloud["client_id"])
+    auth_uri = str(google_cloud["auth_uri"])
+    token_uri = str(google_cloud["token_uri"])
+    auth_provider_x509_cert_url = str(google_cloud["auth_provider_x509_cert_url"])
+    client_x509_cert_url = str(google_cloud["client_x509_cert_url"])
+    universe_domain = str(google_cloud["universe_domain"])
+
 
     try:
         # API키 값 위치 설정
