@@ -6,7 +6,7 @@ joblib
 numpy
 plotly
 xgboost
-sklearn
+scikit-learn
 io
 re
 google.cloud
