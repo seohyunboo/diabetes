@@ -157,11 +157,25 @@ def home_page():
 
 def detect_text(image_bytes):
     # 하드코딩된 API 키 파일 경로s
-    API_KEY_PATH = st.secrets["google_cloud"]["private_key"]
+    API_KEY_PATH = st.secrets["google_cloud"]
+
+    google_cloud = st.secrets["google_cloud"]
+
+    type_ = google_cloud["type"]
+    project_id = google_cloud["project_id"]
+    private_key_id = google_cloud["private_key_id"]
+    private_key = google_cloud["private_key"]
+    client_email = google_cloud["client_email"]
+    client_id = google_cloud["client_id"]
+    auth_uri = google_cloud["auth_uri"]
+    token_uri = google_cloud["token_uri"]
+    auth_provider_x509_cert_url = google_cloud["auth_provider_x509_cert_url"]
+    client_x509_cert_url = google_cloud["client_x509_cert_url"]
+    universe_domain = google_cloud["universe_domain"]
 
     try:
         # API키 값 위치 설정
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = API_KEY_PATH
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_cloud
         client = vision.ImageAnnotatorClient()
 
         # 이미지 객체 생성
