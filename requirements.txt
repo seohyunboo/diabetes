@@ -7,7 +7,6 @@ numpy
 plotly
 xgboost
 scikit-learn
-io
 re
 google.cloud
 os
