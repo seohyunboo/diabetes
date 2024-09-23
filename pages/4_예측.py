@@ -208,7 +208,7 @@ def detect_text(image_bytes):
 def parse_medical_report(text):
     result = {}
     patterns = [
-        (r"요검사\s*신장질환\s*요단백\s*(\d+)", "요단백"),
+        (r"요검사\s*신장질환\s*요단백\s*(\w+)", "요단백"),
         (r"허리둘레\s*(\d+)", "허리둘레"),
         (r"총 콜레스테롤\s*(\d+)", "총 콜레스테롤"),
         (r"중성지방\s*(\d.+)", "중성지방"),
