@@ -15,6 +15,7 @@ import os
 import plotly.graph_objects as go
 from pages.__pycache__.function import classify_risk
 import tempfile
+import json
 
 # 모델 로드
 pred_model = joblib.load('data/pred.pkl')
