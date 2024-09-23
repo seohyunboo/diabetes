@@ -155,27 +155,23 @@ def home_page():
             st.session_state.page = 'survey'
 
 
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Streamlit secrets에서 서비스 계정 정보를 가져옴
+google_cloud = st.secrets["google_cloud"]
+
+# 서비스 계정 인증 생성
+credentials = service_account.Credentials.from_service_account_info(google_cloud)
+
+# Google API 클라이언트를 생성하여 API 사용
+service = build('your_api_service', 'v1', credentials=credentials)
+
+
 def detect_text(image_bytes):
-    # 하드코딩된 API 키 파일 경로
-    google_cloud = st.secrets["google_cloud"]
-
-    type = str(google_cloud["type"])
-    project_id = str(google_cloud["project_id"])
-    private_key_id = str(google_cloud["private_key_id"])
-    private_key = str(google_cloud["private_key"])
-    client_email = str(google_cloud["client_email"])
-    client_id = str(google_cloud["client_id"])
-    auth_uri = str(google_cloud["auth_uri"])
-    token_uri = str(google_cloud["token_uri"])
-    auth_provider_x509_cert_url = str(google_cloud["auth_provider_x509_cert_url"])
-    client_x509_cert_url = str(google_cloud["client_x509_cert_url"])
-    universe_domain = str(google_cloud["universe_domain"])
-
-
     try:
         # API키 값 위치 설정
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_cloud
-        client = vision.ImageAnnotatorClient()
+        client = vision.ImageAnnotatorClient(credentials=credentials)
 
         # 이미지 객체 생성
         image = vision.Image(content=image_bytes)
